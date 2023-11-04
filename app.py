@@ -11,9 +11,9 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
-    is_seller = db.Column(db.Boolean, default=False)
+    # is_seller = db.Column(db.Boolean, default=False)
 
-class Sellar(db.Model):
+class Seller(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
@@ -31,6 +31,15 @@ class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), nullable=False)
     # product = db.relationship('Product', backref='categories', lazy=True)
+
+class Vehicle(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80))
+    vehicle_id = db.Column(db.String(20))
+    latitude = db.Column(db.Float)
+    longitude = db.Column(db.Float)
+    seller_id = db.Column(db.Integer, db.ForeignKey('sellar.id'))
+
 
 with app.app_context():
     db.create_all()
@@ -72,7 +81,7 @@ def seller_signup():
         username = request.form['name']
         password = request.form['password']
         mobile = request.form['mobile']
-        seller = Sellar(username=username, password=password, mobile=mobile)
+        seller = Seller(username=username, password=password, mobile=mobile)
         try:
             db.session.add(seller)
             db.session.commit()
@@ -88,18 +97,34 @@ def seller_login():
     if request.method == 'POST':
         username = request.form['name']
         password = request.form['password']
-        sellers = Sellar.query.all()
+        sellers = Seller.query.all()
         for seller in sellers:
             if seller.username == username and seller.password == password:
                 return redirect(f'/seller_dashboard/{seller.id}')
         return redirect(url_for('seller_login'))
     return render_template('seller_login.html')
 
-@app.route('/seller_dashboard/<int:seller_id>')
+@app.route('/seller_dashboard/<int:seller_id>', methods=['GET', 'POST'])
 def seller_dashboard(seller_id):
-    # Retrieve seller information based on the seller_id
-    # Render the seller dashboard template
-    return render_template('seller_dashboard.html', seller_id=seller_id)
+    seller = Seller.query.get(seller_id)
+    if seller:
+        if request.method == 'POST':
+            name = request.form.get('name')
+            vehicle_id = request.form.get('vehicle_id')
+            latitude = float(request.form.get('latitude'))
+            longitude = float(request.form.get('longitude'))
+            
+            # Create a new vehicle and associate it with the seller
+            vehicle = Vehicle(name=name, vehicle_id=vehicle_id, latitude=latitude, longitude=longitude, seller_id=seller.id)
+            db.session.add(vehicle)
+            db.session.commit()
+            
+        # Retrieve associated vehicles for the seller
+        vehicles = Vehicle.query.filter_by(seller_id=seller_id).all()
+        return render_template('seller_dashboard.html', seller=seller, vehicles=vehicles)
+    else:
+        return "Seller not found"
+
 
 @app.route('/user_dashboard/<int:user_id>')
 def user_dashboard(user_id):
@@ -107,11 +132,56 @@ def user_dashboard(user_id):
     # Render the user dashboard template
     return render_template('user_dashboard.html', user_id=user_id)
 
+
+@app.route("/add_vehicle", methods=['POST'])
+def add_vehicle():
+    name = request.form.get('name')
+    vehicle_id = request.form.get('vehicle_id')
+    latitude = float(request.form.get('latitude'))
+    longitude = float(request.form.get('longitude'))
+    seller_id = request.form.get('seller_id')  
+    
+    if request.form['action'] == 'Add Another Vehicle':
+        with app.app_context():
+            seller = Seller.query.get(seller_id)
+            if seller:
+                vehicle = Vehicle(name=name, vehicle_id=vehicle_id, latitude=latitude, longitude=longitude, seller_id=seller.id)
+                db.session.add(vehicle)
+                db.session.commit()
+            else:
+                return "Seller not found"
+        return redirect(url_for('index'))
+    if request.form['action'] == 'See Location of This Vehicle':
+        return redirect(url_for('get_tracker_location', vehicle_id=vehicle_id))
+    elif request.form['action'] == 'All Vehicle List':
+        return redirect(url_for('vehicle_details'))
+
+
+@app.route("/tracker/<int:vehicle_id>")
+def get_tracker_location(vehicle_id):
+    vehicle = Vehicle.query.filter_by(vehicle_id=vehicle_id).first()
+    if vehicle:
+        return render_template("tracker.html", location=vehicle)
+    else:
+        return "Vehicle not found"
+
+@app.route("/vehicle_details")
+def vehicle_details():
+    vehicles = Vehicle.query.all()
+    vehicle_ids = [vehicle.vehicle_id for vehicle in vehicles]
+    return render_template("vehicle_details.html", vehicles=vehicles, vehicle_ids=vehicle_ids)
+
 @app.route('/logout')
 # @login_required
 def logout():
     # logout_user()
     return redirect(url_for('index'))
+
+# @app.route('/logout')
+# # @login_required
+# def logout():
+#     # logout_user()
+#     return redirect(url_for('index'))
 
 
 if __name__ == "__main__":

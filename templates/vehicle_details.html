@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Vehicle Details</title>
+</head>
+<body>
+    <h1>Vehicle Details</h1>
+    <ul>
+        {% for vehicle in vehicles %}
+            <li>
+                {{ vehicle.vehicle_name }} (ID: {{ vehicle.vehicle_id }}) - Latitude: {{ vehicle.latitude }}, Longitude: {{ vehicle.longitude }}
+                <a href="{{ url_for('tracker', vehicle_ids=[vehicle.vehicle_id]) }}">Location</a>
+            </li>
+        {% endfor %}
+    </ul>
+    <a href="{{ url_for('all_vehicles_on_map') }}">All Vehicles on Map</a>
+</body>
+</html>

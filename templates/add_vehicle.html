@@ -1,22 +1,12 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-    <title>Seller Dashboard</title>
+    <title>Add Vehicle</title>
 </head>
-
 <body>
-    <h2>Welcome, Seller</h2>
-    <h3>Your Vehicles:</h3>
-    <ul>
-        {% for vehicle in vehicles %}
-        <li>{{ vehicle.name }} (ID: {{ vehicle.vehicle_id }})</li>
-        {% endfor %}
-    </ul>
-
-    <h3>Add a New Vehicle:</h3>
-    <form method="POST"action="/seller_dashoard">
-        <label for="name">Name:</label>
+    <h1>Add Vehicle</h1>
+    <form action="/add_vehicle" method="post">
+        <label for="name">Vehicle Name:</label>
         <input type="text" id="name" name="name" required><br>
 
         <label for="vehicle_id">Vehicle ID:</label>
@@ -28,9 +18,9 @@
         <label for="longitude">Longitude:</label>
         <input type="text" id="longitude" name="longitude" required><br>
 
-        <button type="submit">Add Vehicle</button>
+        <input type="submit" name="action" value="Add Another Vehicle">
+        <input type="submit" name="action" value="See Location of This Vehicle">
+        <input type="submit" name="action" value="All Vehicle List">
     </form>
-    <p><a href="{{ url_for('logout') }}">Logout</a></p>
 </body>
-
 </html>
