@@ -66,5 +66,53 @@ def login():
         return redirect(url_for('login'))
     return render_template('login.html')
 
+@app.route('/seller_signup', methods=['GET', 'POST'])
+def seller_signup():
+    if request.method == 'POST':
+        username = request.form['name']
+        password = request.form['password']
+        mobile = request.form['mobile']
+        seller = Sellar(username=username, password=password, mobile=mobile)
+        try:
+            db.session.add(seller)
+            db.session.commit()
+            return redirect('/')
+        except:
+            return 'There was an issue adding a new seller'
+
+    return render_template('seller_dashboard.html')
+
+
+@app.route('/seller_login', methods=['GET', 'POST'])
+def seller_login():
+    if request.method == 'POST':
+        username = request.form['name']
+        password = request.form['password']
+        sellers = Sellar.query.all()
+        for seller in sellers:
+            if seller.username == username and seller.password == password:
+                return redirect(f'/seller_dashboard/{seller.id}')
+        return redirect(url_for('seller_login'))
+    return render_template('seller_login.html')
+
+@app.route('/seller_dashboard/<int:seller_id>')
+def seller_dashboard(seller_id):
+    # Retrieve seller information based on the seller_id
+    # Render the seller dashboard template
+    return render_template('seller_dashboard.html', seller_id=seller_id)
+
+@app.route('/user_dashboard/<int:user_id>')
+def user_dashboard(user_id):
+    # Retrieve user information based on the user_id
+    # Render the user dashboard template
+    return render_template('user_dashboard.html', user_id=user_id)
+
+@app.route('/logout')
+# @login_required
+def logout():
+    # logout_user()
+    return redirect(url_for('index'))
+
+
 if __name__ == "__main__":
     app.run(debug=True)
