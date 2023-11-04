@@ -25,7 +25,7 @@ class Product(db.Model):
     name = db.Column(db.String(120), nullable=False)
     price = db.Column(db.Integer, nullable=False)
     quantity_available = db.Column(db.Integer, nullable=False)
-    # seller_id = db.Column(db.Integer, db.ForeignKey('sellar.id')) 
+    # seller_id = db.Column(db.Integer, db.ForeignKey('seller.id')) 
 
 class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -38,8 +38,7 @@ class Vehicle(db.Model):
     vehicle_id = db.Column(db.String(20))
     latitude = db.Column(db.Float)
     longitude = db.Column(db.Float)
-    seller_id = db.Column(db.Integer, db.ForeignKey('seller.id')) 
-
+    seller_id = db.Column(db.Integer, db.ForeignKey('seller.id'))
 
 
 with app.app_context():
@@ -90,7 +89,7 @@ def seller_signup():
         except:
             return 'There was an issue adding a new seller'
 
-    return render_template('seller_signup.html')
+    return render_template('seller_dashboard.html')
 
 
 @app.route('/seller_login', methods=['GET', 'POST'])
