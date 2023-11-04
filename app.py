@@ -11,26 +11,12 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
-    # is_seller = db.Column(db.Boolean, default=False)
 
 class Seller(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
     mobile = db.Column(db.String(120), nullable=False)
-    # products = db.relationship('Product', backref='seller', lazy=True)
-
-class Product(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(120), nullable=False)
-    price = db.Column(db.Integer, nullable=False)
-    quantity_available = db.Column(db.Integer, nullable=False)
-    # seller_id = db.Column(db.Integer, db.ForeignKey('seller.id')) 
-
-class Category(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(120), nullable=False)
-    # product = db.relationship('Product', backref='categories', lazy=True)
 
 class Vehicle(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -40,6 +26,10 @@ class Vehicle(db.Model):
     longitude = db.Column(db.Float)
     seller_id = db.Column(db.Integer, db.ForeignKey('seller.id'))
 
+class Category(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), nullable=False)
+    seller_id = db.Column(db.Integer, db.ForeignKey('seller.id'))
 
 with app.app_context():
     db.create_all()
@@ -60,7 +50,6 @@ def signup():
             return redirect('/')
         except:
             return 'There was an issue adding a new user'
-
     return render_template('signup.html')
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -88,8 +77,6 @@ def seller_signup():
             return redirect('/')
         except:
             return 'There was an issue adding a new seller'
-
-    # return render_template('seller_dashboard.html')
     return render_template('seller_signup.html')
 
 @app.route('/seller_login', methods=['GET', 'POST'])
@@ -121,21 +108,15 @@ def seller_dashboard(seller_id):
             
         # Retrieve associated vehicles for the seller
         vehicles = Vehicle.query.filter_by(seller_id=seller_id).all()
-        print("Seller:", seller)  # Debug statement
         return render_template('seller_dashboard.html', seller=seller, vehicles=vehicles)
     else:
         return "Seller not found"
 
-
-
 @app.route('/user_dashboard/<int:user_id>')
 def user_dashboard(user_id):
-    # Retrieve user information based on the user_id
-    # Render the user dashboard template
     return render_template('user_dashboard.html', user_id=user_id)
 
-
-@app.route("/add_vehicle", methods=['POST'])
+@app.route('/add_vehicle', methods=['POST'])
 def add_vehicle():
     name = request.form.get('name')
     vehicle_id = request.form.get('vehicle_id')
@@ -158,48 +139,39 @@ def add_vehicle():
     elif request.form['action'] == 'All Vehicle List':
         return redirect(url_for('vehicle_details'))
 
-
-@app.route("/tracker/<int:vehicle_id>")
-def get_tracker_location(vehicle_id):
-    vehicle = Vehicle.query.filter_by(vehicle_id=vehicle_id).first()
-    if vehicle:
-        return render_template("tracker.html", location=vehicle)
-    else:
-        return "Vehicle not found"
-
-@app.route("/vehicle_details")
-def vehicle_details():
-    vehicles = Vehicle.query.all()
-    vehicle_ids = [vehicle.vehicle_id for vehicle in vehicles]
-    return render_template("vehicle_details.html", vehicles=vehicles, vehicle_ids=vehicle_ids)
-
 @app.route('/add_category', methods=['POST'])
 def add_category():
-    if request.method == 'POST':
-        category_name = request.form.get('category_name')
-        # Create a new Category and add it to the database
-        category = Category(name=category_name)
-        db.session.add(category)
-        db.session.commit()
-        seller_id = request.form.get('seller_id')
+    name = request.form.get('name')
+    seller_id = request.form.get('seller_id')
+    if request.form['action'] == 'Add Another Category':
+        with app.app_context():
+            seller = Seller.query.get(seller_id)
+            if seller:
+                category = Category(name=name, seller_id=seller.id)
+                db.session.add(category)
+                db.session.commit()
+            else:
+                return "Seller not found"
         return redirect(url_for('seller_dashboard', seller_id=seller_id))
-    
+    elif request.form['action'] == 'All Category List':
+        return redirect(url_for('category_details'))
+
 @app.route('/delete_category/<int:category_id>', methods=['POST'])
 def delete_category(category_id):
     # Retrieve the category to be deleted
     category = Category.query.get(category_id)
     if category:
+        # Get the seller_id before deleting the category
+        seller_id = category.seller_id
         # Delete the category from the database
         db.session.delete(category)
         db.session.commit()
-        # seller_id = request.form.get('seller_id')
-    return redirect(url_for('seller_dashboard', seller_id=category.seller_id))
-
+        return redirect(url_for('seller_dashboard', seller_id=seller_id))
+    return "Category not found"
 
 @app.route('/logout')
 def logout():
     return redirect(url_for('index'))
-
 
 if __name__ == "__main__":
     app.run(debug=True)
