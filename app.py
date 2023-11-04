@@ -72,7 +72,7 @@ def seller_signup():
         username = request.form['name']
         password = request.form['password']
         mobile = request.form['mobile']
-        seller = Sellar(username=username, password=password, mobile=mobile)
+        seller = Seller(username=username, password=password, mobile=mobile)
         try:
             db.session.add(seller)
             db.session.commit()
@@ -88,7 +88,7 @@ def seller_login():
     if request.method == 'POST':
         username = request.form['name']
         password = request.form['password']
-        sellers = Sellar.query.all()
+        sellers = Seller.query.all()
         for seller in sellers:
             if seller.username == username and seller.password == password:
                 return redirect(f'/seller_dashboard/{seller.id}')
