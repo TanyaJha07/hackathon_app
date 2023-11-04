@@ -13,7 +13,7 @@ class User(db.Model):
     password = db.Column(db.String(120), nullable=False)
     is_seller = db.Column(db.Boolean, default=False)
 
-class Sellar(db.Model):
+class Seller(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
