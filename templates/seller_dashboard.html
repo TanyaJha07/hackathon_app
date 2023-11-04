@@ -31,6 +31,24 @@
 
         <button type="submit">Add Vehicle</button>
     </form>
+
+    <form method="POST" action="/add_category">
+        <label for="category_name">Category Name:</label>
+        <input type="text" id="category_name" name="category_name" required>
+        <button type="submit">Add Category</button>
+    </form>
+
+    {% for category in categories %}
+    <form method="POST" action="/delete_category/{{ category.id }}">
+        <button type="submit">Delete Category {{ category.name }}</button>
+    </form>
+    {% endfor %}
+    
+    <h3>Categories:</h3>
+    <ul>
+        {% for category in categories %}
+        <li>{{ category.name }}</li>
+        {% endfor %}
     <p><a href="{{ url_for('logout') }}">Logout</a></p>
 </body>
 

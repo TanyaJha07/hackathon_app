@@ -173,6 +173,29 @@ def vehicle_details():
     vehicle_ids = [vehicle.vehicle_id for vehicle in vehicles]
     return render_template("vehicle_details.html", vehicles=vehicles, vehicle_ids=vehicle_ids)
 
+@app.route('/add_category', methods=['POST'])
+def add_category():
+    if request.method == 'POST':
+        category_name = request.form.get('category_name')
+        # Create a new Category and add it to the database
+        category = Category(name=category_name)
+        db.session.add(category)
+        db.session.commit()
+        seller_id = request.form.get('seller_id')
+        return redirect(url_for('seller_dashboard', seller_id=seller_id))
+    
+@app.route('/delete_category/<int:category_id>', methods=['POST'])
+def delete_category(category_id):
+    # Retrieve the category to be deleted
+    category = Category.query.get(category_id)
+    if category:
+        # Delete the category from the database
+        db.session.delete(category)
+        db.session.commit()
+        # seller_id = request.form.get('seller_id')
+    return redirect(url_for('seller_dashboard', seller_id=category.seller_id))
+
+
 @app.route('/logout')
 def logout():
     return redirect(url_for('index'))
