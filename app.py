@@ -172,16 +172,8 @@ def vehicle_details():
     return render_template("vehicle_details.html", vehicles=vehicles, vehicle_ids=vehicle_ids)
 
 @app.route('/logout')
-# @login_required
 def logout():
-    # logout_user()
     return redirect(url_for('index'))
-
-# @app.route('/logout')
-# # @login_required
-# def logout():
-#     # logout_user()
-#     return redirect(url_for('index'))
 
 
 if __name__ == "__main__":
