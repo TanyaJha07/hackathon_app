@@ -38,7 +38,8 @@ class Vehicle(db.Model):
     vehicle_id = db.Column(db.String(20))
     latitude = db.Column(db.Float)
     longitude = db.Column(db.Float)
-    seller_id = db.Column(db.Integer, db.ForeignKey('sellar.id'))
+    seller_id = db.Column(db.Integer, db.ForeignKey('seller.id')) 
+
 
 
 with app.app_context():
@@ -89,7 +90,7 @@ def seller_signup():
         except:
             return 'There was an issue adding a new seller'
 
-    return render_template('seller_dashboard.html')
+    return render_template('seller_signup.html')
 
 
 @app.route('/seller_login', methods=['GET', 'POST'])
