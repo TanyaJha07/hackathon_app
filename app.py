@@ -89,8 +89,8 @@ def seller_signup():
         except:
             return 'There was an issue adding a new seller'
 
-    return render_template('seller_dashboard.html')
-
+    # return render_template('seller_dashboard.html')
+    return render_template('seller_signup.html')
 
 @app.route('/seller_login', methods=['GET', 'POST'])
 def seller_login():
@@ -121,9 +121,11 @@ def seller_dashboard(seller_id):
             
         # Retrieve associated vehicles for the seller
         vehicles = Vehicle.query.filter_by(seller_id=seller_id).all()
+        print("Seller:", seller)  # Debug statement
         return render_template('seller_dashboard.html', seller=seller, vehicles=vehicles)
     else:
         return "Seller not found"
+
 
 
 @app.route('/user_dashboard/<int:user_id>')
