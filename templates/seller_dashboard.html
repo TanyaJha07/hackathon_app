@@ -42,6 +42,7 @@
 
     {% for category in categories %}
     <form method="POST" action="/delete_category/{{ category.id }}">
+        <input type="hidden" name="seller_id" value="{{ category.seller_id }}"> <!-- Include the seller ID here -->
         <button type="submit">Delete Category {{ category.name }}</button>
     </form>
     {% endfor %}

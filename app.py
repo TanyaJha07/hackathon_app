@@ -18,17 +18,23 @@ class Seller(db.Model):
     password = db.Column(db.String(120), nullable=False)
     mobile = db.Column(db.String(120), nullable=False)
 
+class Product(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), nullable=False)
+    price = db.Column(db.Integer, nullable=False)
+    quantity_available = db.Column(db.Integer, nullable=False)
+
+class Category(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), nullable=False)
+    seller_id = db.Column(db.Integer, nullable=False)
+
 class Vehicle(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
     vehicle_id = db.Column(db.String(20))
     latitude = db.Column(db.Float)
     longitude = db.Column(db.Float)
-    seller_id = db.Column(db.Integer, db.ForeignKey('seller.id'))
-
-class Category(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(120), nullable=False)
     seller_id = db.Column(db.Integer, db.ForeignKey('seller.id'))
 
 with app.app_context():
@@ -101,14 +107,14 @@ def seller_dashboard(seller_id):
             latitude = float(request.form.get('latitude'))
             longitude = float(request.form.get('longitude'))
             
-            # Create a new vehicle and associate it with the seller
             vehicle = Vehicle(name=name, vehicle_id=vehicle_id, latitude=latitude, longitude=longitude, seller_id=seller.id)
             db.session.add(vehicle)
             db.session.commit()
-            
-        # Retrieve associated vehicles for the seller
+        
         vehicles = Vehicle.query.filter_by(seller_id=seller_id).all()
-        return render_template('seller_dashboard.html', seller=seller, vehicles=vehicles)
+        categories = Category.query.filter_by(seller_id=seller_id).all()
+        
+        return render_template('seller_dashboard.html', seller=seller, vehicles=vehicles, categories=categories)
     else:
         return "Seller not found"
 
@@ -143,31 +149,23 @@ def add_vehicle():
 def add_category():
     name = request.form.get('name')
     seller_id = request.form.get('seller_id')
+    
     if request.form['action'] == 'Add Another Category':
-        with app.app_context():
-            seller = Seller.query.get(seller_id)
-            if seller:
-                category = Category(name=name, seller_id=seller.id)
-                db.session.add(category)
-                db.session.commit()
-            else:
-                return "Seller not found"
+        category = Category(name=name, seller_id=seller_id)
+        db.session.add(category)
+        db.session.commit()
         return redirect(url_for('seller_dashboard', seller_id=seller_id))
     elif request.form['action'] == 'All Category List':
         return redirect(url_for('category_details'))
 
 @app.route('/delete_category/<int:category_id>', methods=['POST'])
 def delete_category(category_id):
-    # Retrieve the category to be deleted
     category = Category.query.get(category_id)
     if category:
-        # Get the seller_id before deleting the category
         seller_id = category.seller_id
-        # Delete the category from the database
         db.session.delete(category)
         db.session.commit()
         return redirect(url_for('seller_dashboard', seller_id=seller_id))
-    return "Category not found"
 
 @app.route('/logout')
 def logout():
