@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Live Location Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+</head>
+<body>
+    <h1>Your Live Location</h1>
+    <div id="map" style="height: 400px;"></div>
+    <button id="getLocation">Get My Location</button>
+    <script>
+        document.querySelector("#getLocation").addEventListener("click", getLocation);
+
+        var mymap;
+        var markers = [];
+
+        function getLocation() {
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(showPosition, showError);
+            } else {
+                alert("Geolocation is not supported by your browser.");
+            }
+        }
+
+        function showPosition(position) {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+
+            if (!mymap) {
+                mymap = L.map('map').setView([latitude, longitude], 15);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mymap);
+
+                // Your location (Red marker)
+                const redMarker = L.marker([latitude, longitude], {icon: L.divIcon({className: 'red-marker', html: 'You'})}).addTo(mymap);
+
+                // Other two locations (Blue markers with brighter labels)
+                for (let i = 0; i < 2; i++) {
+                    const randomLat = latitude + (Math.random() - 0.5) / 10; // Generate random latitude near the current location
+                    const randomLng = longitude + (Math.random() - 0.5) / 10; // Generate random longitude near the current location
+                    const name = `Location ${i + 1}`;
+                    const blueMarker = L.marker([randomLat, randomLng], {icon: L.divIcon({className: 'blue-marker', html: name})}).addTo(mymap);
+                    markers.push(blueMarker);
+                }
+            }
+        }
+
+        function showError(error) {
+            alert("Error getting location: " + error.message);
+        }
+    </script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <style>
+        .red-marker {
+            background-color: red;
+            color: white;
+            border-radius: 50%;
+            padding: 5px;
+            text-align: center;
+        }
+        .blue-marker {
+            background-color: blue;
+            color: #ee6014; /* Adjust the color to make it brighter */
+            border-radius: 50%;
+            padding: 5px;
+            text-align: center;
+        }
+    </style>
+</body>
+</html>

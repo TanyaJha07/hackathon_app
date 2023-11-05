@@ -1,11 +1,24 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Seller Dashboard</title>
+    <title>User Dashboard</title>
 </head>
 <body>
-    <h1>Welcome, User!</h1>
-    <!-- Display seller-related information and actions here -->
-    <p><a href="{{ url_for('logout') }}">Logout</a></p>
+    <h1>Welcome, User</h1>
+    <h2>List of Vendors:</h2>
+    <ul>
+        {% for vendor in vendors %}
+            <li>
+                Vendor: {{ vendor.username }}
+                <br>
+                Phone: {{ vendor.mobile }}
+                <br>
+                <form action="{{ url_for('live_location', vendor_id=vendor.id) }}" method="GET">
+                    <button type="submit">Get Vendor Live Location</button>
+                </form>
+            </li>
+            <br>
+        {% endfor %}
+    </ul>
 </body>
 </html>

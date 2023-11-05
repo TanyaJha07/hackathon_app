@@ -118,9 +118,14 @@ def seller_dashboard(seller_id):
     else:
         return "Seller not found"
 
+# @app.route('/user_dashboard/<int:user_id>')
+# def user_dashboard(user_id):
+#     return render_template('user_dashboard.html', user_id=user_id)
+
 @app.route('/user_dashboard/<int:user_id>')
 def user_dashboard(user_id):
-    return render_template('user_dashboard.html', user_id=user_id)
+    vendors = Seller.query.all()
+    return render_template('user_dashboard.html', vendors=vendors)
 
 @app.route('/add_vehicle', methods=['POST'])
 def add_vehicle():
@@ -166,6 +171,14 @@ def delete_category(category_id):
         db.session.delete(category)
         db.session.commit()
         return redirect(url_for('seller_dashboard', seller_id=seller_id))
+    
+@app.route('/live_location')
+def live_location():
+    locations = [
+        {"name": "Location 1", "latitude": 28.855574, "longitude": 77.090332},
+        {"name": "Location 2", "latitude": 28.8529, "longitude": 77.0897}
+    ]
+    return render_template('live_location.html', locations=locations)
 
 @app.route('/logout')
 def logout():
