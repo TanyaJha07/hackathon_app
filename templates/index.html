@@ -1,20 +1,26 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>HOME</title>
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="style.css"> <!-- Link your stylesheet here -->
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE-edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="static/images/favicon.png">
+    <title>Music App</title>
+    <meta name="description" content="Your music app description here">
+    <link rel="stylesheet" href="styles.css"> <!-- Add your CSS file here -->
+
     <style>
         body {
+            /* Your background image URL */
+            background-image: url('static/hackbg.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            height: 100vh; /* Set the body to take up the full viewport height */
+            margin: 0; /* Remove margin for the body */
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
+            justify-content: flex-end; /* Place content at the bottom of the viewport */
         }
 
         header {
@@ -23,6 +29,7 @@
 
         .cta {
             text-align: center;
+            padding-top: 20vh; /* Add padding to push content up */
         }
 
         .btn {
@@ -39,6 +46,7 @@
         footer {
             text-align: center;
             margin-top: 20px;
+            padding-top: 10vh; /* Add padding to push content up */
         }
 
         .footer-text {
@@ -62,5 +70,6 @@
     <footer>
         <div class="footer-text">&copy; 2023 LiveVendors. All rights reserved.</div>
     </footer>
+    <script src="script.js" async defer></script>
 </body>
 </html>
