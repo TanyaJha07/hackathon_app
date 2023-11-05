@@ -18,12 +18,6 @@ class Seller(db.Model):
     password = db.Column(db.String(120), nullable=False)
     mobile = db.Column(db.String(120), nullable=False)
 
-class Product(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(120), nullable=False)
-    price = db.Column(db.Integer, nullable=False)
-    quantity_available = db.Column(db.Integer, nullable=False)
-
 class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), nullable=False)
@@ -175,8 +169,9 @@ def delete_category(category_id):
 @app.route('/live_location')
 def live_location():
     locations = [
-        {"name": "Location 1", "latitude": 28.855574, "longitude": 77.090332},
-        {"name": "Location 2", "latitude": 28.8529, "longitude": 77.0897}
+        {"name": "Vendor 1 Location", "latitude": 28.855574, "longitude": 77.090332},
+        {"name": "Vendor 2 Location", "latitude": 28.8529, "longitude": 77.0897}
+
     ]
     return render_template('live_location.html', locations=locations)
 

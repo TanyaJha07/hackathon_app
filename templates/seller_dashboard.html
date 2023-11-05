@@ -105,10 +105,10 @@
             <button type="submit">Add Vehicle</button>
         </form>
 
-        <form method="POST" action="/add_category">
-            <label for="category_name">Category Name:</label>
-            <input type="text" id="category_name" name="name" required>
-            <input type="hidden" name="seller_id" value="{{ seller.id }}">
+        <form action="{{ url_for('add_category') }}" method="POST">
+            <input type="text" name="name" placeholder="Category Name" required>
+            <input type="hidden" name="action" value="Add Another Category"> <!-- Add this line -->
+            <input type="hidden" name="seller_id" value="{{ seller.id }}"> <!-- Assuming you need the seller_id -->
             <button type="submit">Add Category</button>
         </form>
 

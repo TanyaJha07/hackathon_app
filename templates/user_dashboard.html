@@ -2,6 +2,50 @@
 <html>
 <head>
     <title>User Dashboard</title>
+    <style>
+        body {
+            background-image: url('static/2.png') ;
+            font-family: Arial, sans-serif;
+            background-color: rgb(247, 242, 230);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        h2 {
+            margin-top: 20px;
+            color: #333;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        form {
+            display: inline; /* Put the button on the same line as the vendor info */
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            margin: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
 </head>
 <body>
     <h1>Welcome, User</h1>
@@ -9,15 +53,12 @@
     <ul>
         {% for vendor in vendors %}
             <li>
-                Vendor: {{ vendor.username }}
-                <br>
-                Phone: {{ vendor.mobile }}
-                <br>
+                <strong>Vendor:</strong> {{ vendor.username }}<br>
+                <strong>Phone:</strong> {{ vendor.mobile }}<br>
                 <form action="{{ url_for('live_location', vendor_id=vendor.id) }}" method="GET">
                     <button type="submit">Get Vendor Live Location</button>
                 </form>
             </li>
-            <br>
         {% endfor %}
     </ul>
 </body>
