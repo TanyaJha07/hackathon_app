@@ -45,7 +45,9 @@ This is a Flask-based web application for a Vehicle Tracking System. It allows u
     ```bash
     python app.py
 
-6. Access the application in your web browser at `http://localhost:5000`.
+6. Access the application in your web browser at `http://localhost:5000`, `https://vendorliv.azurewebsites.net/`.
+
+7. Power Point Link: `https://docs.google.com/presentation/d/1rZfeHgvEGFVFtJYEtR5o-hGjmNcAZakq/edit?usp=drive_link&ouid=101807901584095460932&rtpof=true&sd=true`
 
 # Usage
 1. Visit the homepage.
