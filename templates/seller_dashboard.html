@@ -1,61 +1,132 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <title>Seller Dashboard</title>
+    <style>
+        /* Center the content and add some spacing */
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Style for the main container */
+        .container {
+            background-color: #f7f7f7;
+            border-radius: 10px;
+            padding: 20px;
+            width: 400px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Center the form */
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        /* Style for form elements */
+        label, input {
+            margin: 10px 0;
+        }
+
+        /* Style for the buttons */
+        button {
+            margin: 20px 0;
+            background-color: #333;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #555;
+        }
+
+        /* Style for the headings */
+        h2, h3 {
+            margin: 10px 0;
+        }
+
+        /* Style for the list items */
+        ul {
+            text-align: left;
+            padding-left: 20px;
+        }
+
+        li {
+            margin: 5px 0;
+        }
+
+        /* Style for links */
+        a {
+            text-decoration: none;
+            color: #0077cc;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
-
 <body>
-    <h2>Welcome, Seller</h2>
-    <h3>Your Vehicles:</h3>
-    <ul>
-        {% for vehicle in vehicles %}
-        <li>{{ vehicle.name }} (ID: {{ vehicle.vehicle_id }})</li>
-        {% endfor %}
-    </ul>
+    <div class="container">
+        <h2>Welcome, Seller</h2>
+        <h3>Your Vehicles:</h3>
+        <ul>
+            {% for vehicle in vehicles %}
+            <li>{{ vehicle.name }} (ID: {{ vehicle.vehicle_id }})</li>
+            {% endfor %}
+        </ul>
 
-    <h3>Add a New Vehicle:</h3>
-    <form method="POST" action="/seller_dashboard/{{ seller.id }}">
+        <h3>Add a New Vehicle:</h3>
+        <form method="POST" action="/seller_dashboard/{{ seller.id }}">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
 
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name" required><br>
+            <label for="vehicle_id">Vehicle ID:</label>
+            <input type="text" id="vehicle_id" name="vehicle_id" required>
 
-        <label for="vehicle_id">Vehicle ID:</label>
-        <input type="text" id="vehicle_id" name="vehicle_id" required><br>
+            <label for="latitude">Latitude:</label>
+            <input type="text" id="latitude" name="latitude" required>
 
-        <label for="latitude">Latitude:</label>
-        <input type="text" id="latitude" name="latitude" required><br>
+            <label for="longitude">Longitude:</label>
+            <input type="text" id="longitude" name="longitude" required>
 
-        <label for="longitude">Longitude:</label>
-        <input type="text" id="longitude" name="longitude" required><br>
+            <button type="submit">Add Vehicle</button>
+        </form>
 
-        <button type="submit">Add Vehicle</button>
-    </form>
+        <form method="POST" action="/add_category">
+            <label for="category_name">Category Name:</label>
+            <input type="text" id="category_name" name="name" required>
+            <input type="hidden" name="seller_id" value="{{ seller.id }}">
+            <button type="submit">Add Category</button>
+        </form>
 
-    <form method="POST" action="/add_category">
-        <label for="category_name">Category Name:</label>
-        <input type="text" id="category_name" name="name" required> 
-        <input type="hidden" name="seller_id" value="{{ seller.id }}"> 
-        <input type="submit" name="action" value="Add Another Category">
-    </form>
-    
-
-    {% for category in categories %}
-    <form method="POST" action="/delete_category/{{ category.id }}">
-        <input type="hidden" name="seller_id" value="{{ category.seller_id }}"> <!-- Include the seller ID here -->
-        <button type="submit">Delete Category {{ category.name }}</button>
-    </form>
-    {% endfor %}
-    
-    <h3>Categories:</h3>
-
-    <ul>
         {% for category in categories %}
-        <li>{{category.name}}</li>
+        <form method="POST" action="/delete_category/{{ category.id }}">
+            <input type="hidden" name="seller_id" value="{{ category.seller_id }}">
+            <button type="submit">Delete Category {{ category.name }}</button>
+        </form>
         {% endfor %}
-    </ul>
 
-    <p><a href="{{ url_for('logout') }}">Logout</a></p>
+        <h3>Categories:</h3>
+        <ul>
+            {% for category in categories %}
+            <li>{{ category.name }}</li>
+            {% endfor %}
+        </ul>
+
+        <p><a href="{{ url_for('logout') }}">Logout</a></p>
+    </div>
 </body>
-
 </html>
